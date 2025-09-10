@@ -4,6 +4,7 @@ import {  useEffect, useState } from 'react'
 import Navbar from "../components/Navbar";
 import ProtectedRoute from "@/components/protected-route";
 import { apiGet, apiPost } from "../../lib/api";
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -147,6 +148,7 @@ export default function DashboardPage() {
             {/* Example Existing Cards */}
             {server && server.map((srv, index) => (
               <div key={index} className="group">
+              <Link href={`/server/${srv.subdomain}`}>
               <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer aspect-square flex flex-col p-4">
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
@@ -165,6 +167,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
+              </Link>
             </div>
             ))}
 
