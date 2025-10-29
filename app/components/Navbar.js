@@ -18,7 +18,7 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-white shadow flex items-center justify-between px-6 py-4">
       <Link href="/" className="text-xl font-bold text-purple-600">
-        Iluzan
+        Ilusion
       </Link>
       
       <div className="flex gap-4">
