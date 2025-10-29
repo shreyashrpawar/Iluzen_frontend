@@ -21,10 +21,24 @@ export default function Page() {
     type: 'GET',
     response: '',
   });
-      async function fetchData() {
-      const res = await apiGet(`/get_server/${subdomain}`);
-      const data = await res.json();
-      setRequest(data);
+    async function fetchData() {
+      // const res = await apiGet(`/get_server/${subdomain}`);
+      // const data = await res.json();
+      // setRequest(data);
+                try {
+      const response = await apiGet('/get_server/'+subdomain);
+
+      if (response && response.ok) {
+        const result = await response.json()
+        console.log('Server created successfully:', result)
+        setRequest(data); // Assuming the server data is in result.server
+      } else {
+        const errorData = await response.json()
+        console.log(errorData.message || 'Failed to fetch servers')
+      }
+    } catch (err) {
+      console.error('Error fetching server:', err)
+    } 
     }
   useEffect(() => {
 
