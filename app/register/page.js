@@ -5,14 +5,17 @@ import { useRouter } from 'next/navigation'
 
 
 export default function SignupPage() { 
-    
+        const { register } = useAuth()
+      const [email, setEmail] = useState('')
+      const [password, setPassword] = useState('')
+        const [error, setError] = useState('')
+        const [isLoading, setIsLoading] = useState(false)
+        
       const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
-    setIsLoading(true)
 
     try {
-      await login(email, password)
+      await register(email, password)
       router.push('/dashboard')
     } catch (err) {
       setError(err.message)
@@ -20,11 +23,8 @@ export default function SignupPage() {
       setIsLoading(false)
     }
   }
-    const { user, login, loading } = useAuth()
     const router = useRouter()
-    
-      const [email, setEmail] = useState('')
-      const [password, setPassword] = useState('')
+
     return(
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w
