@@ -8,6 +8,7 @@ export default function SignupPage() {
   const router = useRouter()
 
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -41,7 +42,7 @@ export default function SignupPage() {
     setIsLoading(true)
 
     try {
-      await register(email, password)
+      await register(name,email, password)
       router.push('/dashboard')
     } catch (err) {
       setError(err.message)
@@ -62,6 +63,20 @@ export default function SignupPage() {
         )}
 
         <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+            <label htmlFor="name" className="block text-sm mb-2 text-gray-700">
+              Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter your name"
+              required
+            />
+          </div>
           <div>
             <label htmlFor="email" className="block text-sm mb-2 text-gray-700">
               Email
