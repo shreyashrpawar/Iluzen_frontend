@@ -31,7 +31,7 @@ export default function Page() {
       if (response && response.ok) {
         const result = await response.json()
         console.log('Server created successfully:', result)
-        setRequest(data); // Assuming the server data is in result.server
+        setRequest(result); // Assuming the server data is in result.server
       } else {
         const errorData = await response.json()
         console.log(errorData.message || 'Failed to fetch servers')
