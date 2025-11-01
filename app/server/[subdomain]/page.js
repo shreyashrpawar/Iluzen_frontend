@@ -6,7 +6,7 @@ import { apiGet,apiPost } from '@/lib/api';
 import ProtectedRoute from '@/components/protected-route';
 import Navbar from '@/app/components/Navbar';
 import { CirclePlus,X, Server, Globe, ArrowRight ,Trash2} from 'lucide-react';
-
+import CopyButton from '@/app/components/CopyButton';
 export default function Page() {
   const { subdomain } = useParams();
   const router = useRouter();
@@ -190,6 +190,11 @@ const closePopup = () => {
                       <pre className="text-xs text-slate-700 font-mono overflow-x-auto">
                         {req.response.length > 60 ? req.response.substring(0, 60) + '...' : req.response}
                       </pre>
+                    </div>
+                    <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
+                      <p>Send to</p>
+                      <p className="text-sm text-slate-700 break-all">{subdomain}.ilusion.io/{req.url}</p>
+                        <CopyButton text={'https://'+subdomain+'.ilusion.io/'+req.url} />
                     </div>
                   </div>
                 </div>
