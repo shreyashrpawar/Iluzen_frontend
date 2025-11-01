@@ -50,6 +50,26 @@ export default function DashboardPage() {
     })
     setError('')
   }
+    const deleteServer = async (id) => {
+      // const requestId = e.currentTarget.getAttribute('data-id');
+      try {
+        const response = await apiPost(`/delete_server`, {
+          id: id,
+        });
+        
+        if (response && response.ok) {
+          console.log('Server deleted successfully');
+          // Refresh the request list
+          fetchServer();
+        } else {
+          const errorData = await response.json();
+          console.log(errorData.message || 'Failed to delete request');
+        }
+      } catch (err) {
+        console.log('Error deleting request:', err);
+      }
+    };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -157,27 +177,13 @@ export default function DashboardPage() {
                       <div className="p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
                         <Server className="text-indigo-600" size={20} />
                       </div>
-                      <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-50 rounded-lg">
-                        <Trash2 className="text-slate-400 hover:text-red-500" size={16} />
-                      </button>
+                      <div className="p-1.5 hover:bg-red-50 rounded-lg m-3">
+                        <Trash2 onClick={(e) =>{e.preventDefault();deleteServer(srv.id);}} className="text-slate-400 hover:text-red-500" size={16} />
+                      </div>
                     </div>
                     
                     <h3 className="text-base font-semibold text-slate-900 mb-1 truncate">{srv.name}</h3>
-                    <p className="text-xs text-slate-500 truncate">{srv.subdomain}.iluzan.com</p>
-                  </div>
-                  
-                  <div className="mt-4">
-                    {srv.status === 'online' ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                        Online
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
-                        <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
-                        Offline
-                      </span>
-                    )}
+                    <p className="text-xs text-slate-500 truncate">{srv.subdomain}.ilusion.io</p>
                   </div>
                 </div>
               </div></Link>

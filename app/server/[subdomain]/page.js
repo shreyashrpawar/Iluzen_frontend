@@ -1,14 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams,useRouter } from 'next/navigation';
 import { apiGet,apiPost } from '@/lib/api';
 import ProtectedRoute from '@/components/protected-route';
 import Navbar from '@/app/components/Navbar';
-import { CirclePlus,X, Server, Globe, ArrowRight } from 'lucide-react';
+import { CirclePlus,X, Server, Globe, ArrowRight ,Trash2} from 'lucide-react';
 
 export default function Page() {
   const { subdomain } = useParams();
+  const router = useRouter();
     const [request, setRequest] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false)
       const [isSubmitting, setIsSubmitting] = useState(false)
@@ -36,11 +37,13 @@ export default function Page() {
         console.log('Server created successfully:', result)
         setRequest(result); // Assuming the server data is in result.server
       } else {
-        const errorData = await response.json()
-        console.log(errorData.message || 'Failed to fetch servers')
-      }
+        // const errorData = await response.json()
+        console.log('Server not found');
+        router.push('/not-found'); 
+      }     
     } catch (err) {
-      console.error('Error fetching server:', err)
+      console.log('Server not found');
+      router.push('/not-found'); 
     } 
     }
   useEffect(() => {
@@ -57,7 +60,7 @@ const closePopup = () => {
     name: '',
     subdomain: '',
     url: '',
-    type: '',
+    type: 'GET',
     response: '',    })
     setError('')
   }
@@ -68,6 +71,25 @@ const closePopup = () => {
       [name]: value
     }))
   }
+  const deleteRequest = async (id) => {
+    // const requestId = e.currentTarget.getAttribute('data-id');
+    try {
+      const response = await apiPost(`/delete_request/${subdomain}`, {
+        id: id,
+      });
+      
+      if (response && response.ok) {
+        console.log('Request deleted successfully');
+        // Refresh the request list
+        fetchData();
+      } else {
+        const errorData = await response.json();
+        console.log(errorData.message || 'Failed to delete request');
+      }
+    } catch (err) {
+      console.log('Error deleting request:', err);
+    }
+  };
     const handleSubmit = async (e) => {
       e.preventDefault()
       setIsSubmitting(true)
@@ -153,7 +175,9 @@ const closePopup = () => {
                         </span>
                       </div>
                     </div>
+                    <div><Trash2 onClick={() => deleteRequest(req.id)} className="text-slate-400 hover:text-red-500" size={22}/></div>
                   </div>
+                  
                   
                   <div className="space-y-3">
                     <div className="flex items-start gap-2 p-3 bg-slate-50 rounded-lg">
@@ -170,12 +194,12 @@ const closePopup = () => {
                   </div>
                 </div>
                 
-                <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                {/* <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
                   <button className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 transition-colors">
                     View Details
                     <ArrowRight size={14} />
                   </button>
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
