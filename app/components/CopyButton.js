@@ -18,7 +18,7 @@ export default function CopyButton({ text }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-2 rounded-lg bg-slate-800 text-white p-2 m-2 hover:bg-slate-700 transition"
+      className="flex items-center gap-2 text-xs rounded-lg bg-blue-100 text-slate-500 p-2 m-2 hover:bg-slate-700 transition"
     >
       {copied ? (
         <>

@@ -56,9 +56,6 @@ const Home = () => {
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-white/80 hover:text-white transition-colors">Features</a>
-              <a href="#pricing" className="text-white/80 hover:text-white transition-colors">Pricing</a>
-              <a href="#docs" className="text-white/80 hover:text-white transition-colors">Docs</a>
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
                <a href="/login">Login</a>
                 
@@ -110,7 +107,7 @@ const Home = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
+      {/* <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -128,7 +125,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Features Section */}
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
