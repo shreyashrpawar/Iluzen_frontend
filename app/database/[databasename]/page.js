@@ -16,8 +16,7 @@ export default function DatabasePage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    engine: 'InnoDB',
-    collation: 'utf8mb4_general_ci'
+    columns: []
   });
 
   async function fetchData() {
@@ -27,7 +26,7 @@ export default function DatabasePage() {
       if (response && response.ok) {
         const result = await response.json();
         console.log('Database fetched successfully:', result);
-        setDatabase(result);
+        setDatabase(result.tables);
       } else {
         console.log('Database not found');
         router.push('/not-found');
@@ -52,8 +51,7 @@ export default function DatabasePage() {
     setFormData({
       name: '',
       description: '',
-      engine: 'InnoDB',
-      collation: 'utf8mb4_general_ci'
+      columns: []
     });
     setError('');
   };
@@ -72,11 +70,10 @@ export default function DatabasePage() {
     setError('');
 
     try {
-      const response = await apiPost(`/get_database/${databasename}`, {
+      const response = await apiPost(`/create_table/${databasename}`, {
         name: formData.name.trim(),
         description: formData.description.trim(),
-        engine: formData.engine,
-        collation: formData.collation,
+        columns: formData.columns
       });
 
       if (response && response.ok) {
@@ -116,10 +113,29 @@ export default function DatabasePage() {
       }
     }
   };
+  const addColumn = () => {
+  setFormData({
+    ...formData,
+    columns: [...formData.columns, { name: '', type: '', length: '', nullable: false, primary: false }]
+  });
+};
+
+const removeColumn = (index) => {
+  const newCols = [...formData.columns];
+  newCols.splice(index, 1);
+  setFormData({ ...formData, columns: newCols });
+};
+
+const handleColumnChange = (index, field, value) => {
+  const newCols = [...formData.columns];
+  newCols[index][field] = value;
+  setFormData({ ...formData, columns: newCols });
+};
+
 
   if (!database) return <p>Loading...</p>;
 
-  const tables = database.tables || [];
+  const tables = database || [];
 
   return (
     <ProtectedRoute>
@@ -202,7 +218,7 @@ export default function DatabasePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {tables.map((table) => (
                 <div
-                  key={table.id}
+                  key={table}
                   className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-white/20 group hover:border-purple-400/50"
                 >
                   <div className="p-6">
@@ -212,14 +228,11 @@ export default function DatabasePage() {
                           <Table className="text-purple-300" size={24} />
                         </div>
                         <div>
-                          <h2 className="text-xl font-semibold text-white">{table.name}</h2>
-                          <span className="inline-block mt-1 px-2 py-1 text-xs font-semibold rounded-full bg-purple-500/20 text-purple-300">
-                            {table.engine}
-                          </span>
+                          <h2 className="text-xl font-semibold text-white">{table}</h2>
                         </div>
                       </div>
                       <button
-                        onClick={() => handleDelete(table.id)}
+                        onClick={() => handleDelete(table.name)}
                         className="text-gray-400 hover:text-red-400 transition-colors"
                       >
                         <Trash2 size={20} />
@@ -247,7 +260,6 @@ export default function DatabasePage() {
                       <div className="p-3 bg-white/5 rounded-lg border border-white/10">
                         <p className="text-xs text-gray-400 mb-1 font-medium">Details</p>
                         <div className="text-xs text-gray-300 space-y-1">
-                          <p>Collation: {table.collation}</p>
                           <p>Size: {table.size || '0 KB'}</p>
                           <p>Created: {table.createdAt ? new Date(table.createdAt).toLocaleDateString() : 'N/A'}</p>
                         </div>
@@ -337,43 +349,72 @@ export default function DatabasePage() {
                       className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                     />
                   </div>
-
-                  <div>
-                    <label htmlFor="engine" className="block text-sm font-semibold text-gray-300 mb-2">
-                      Storage Engine
-                    </label>
-                    <select
-                      id="engine"
-                      name="engine"
-                      value={formData.engine}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                    >
-                      <option value="InnoDB">InnoDB (Recommended)</option>
-                      <option value="MyISAM">MyISAM</option>
-                      <option value="MEMORY">MEMORY</option>
-                      <option value="ARCHIVE">ARCHIVE</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="collation" className="block text-sm font-semibold text-gray-300 mb-2">
-                      Collation
-                    </label>
-                    <select
-                      id="collation"
-                      name="collation"
-                      value={formData.collation}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                    >
-                      <option value="utf8mb4_general_ci">utf8mb4_general_ci</option>
-                      <option value="utf8mb4_unicode_ci">utf8mb4_unicode_ci</option>
-                      <option value="utf8_general_ci">utf8_general_ci</option>
-                      <option value="latin1_swedish_ci">latin1_swedish_ci</option>
-                    </select>
-                  </div>
                 </div>
+                {/* Column Builder Section */}
+<div className="mt-6">
+  <h4 className="text-md font-semibold text-gray-200 mb-3">Table Columns</h4>
+
+  {formData.columns.map((col, index) => (
+    <div key={index} className="grid grid-cols-6 gap-2 mb-3">
+      <input
+        type="text"
+        placeholder="Column name"
+        value={col.name}
+        onChange={(e) => handleColumnChange(index, 'name', e.target.value)}
+        className="col-span-2 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500"
+      />
+      <select
+        value={col.type}
+        onChange={(e) => handleColumnChange(index, 'type', e.target.value)}
+        className="w-full col-span-1 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-black"
+      >
+        <option value="">Type</option>
+        <option value="INT">INT</option>
+        <option value="VARCHAR">VARCHAR</option>
+        <option value="TEXT">TEXT</option>
+        <option value="DATE">DATE</option>
+        <option value="TIMESTAMP">TIMESTAMP</option>
+      </select>
+      <input
+        type="number"
+        placeholder="Length"
+        value={col.length || ''}
+        onChange={(e) => handleColumnChange(index, 'length', e.target.value)}
+        className="col-span-1 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+      />
+      <label className="flex items-center gap-1 text-gray-300">
+        <input
+          type="checkbox"
+          checked={col.primary || false}
+          onChange={(e) => handleColumnChange(index, 'primary', e.target.checked)}
+        />
+        PK
+      </label>
+      <label className="flex items-center gap-1 text-gray-300">
+        <input
+          type="checkbox"
+          checked={col.nullable || false}
+          onChange={(e) => handleColumnChange(index, 'nullable', e.target.checked)}
+        />
+        Null
+      </label>
+      <button
+        onClick={() => removeColumn(index)}
+        className="text-red-400 hover:text-red-600"
+      >
+        ✕
+      </button>
+    </div>
+  ))}
+
+  <button
+    type="button"
+    onClick={addColumn}
+    className="mt-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg"
+  >
+    + Add Column
+  </button>
+</div>
 
                 {/* Modal Footer */}
                 <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-white/10">
