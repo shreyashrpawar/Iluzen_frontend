@@ -21,7 +21,7 @@ export default function DatabasePage() {
 
   async function fetchData() {
     try {
-      const response = await apiGet('/get_databases/' + databasename);
+      const response = await apiGet('/get_database/' + databasename);
 
       if (response && response.ok) {
         const result = await response.json();
