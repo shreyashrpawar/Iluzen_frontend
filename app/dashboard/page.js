@@ -5,6 +5,7 @@ import ProtectedRoute from "@/components/protected-route";
 import { apiGet, apiPost } from "../../lib/api";
 import Link from 'next/link';
 import { Plus, Server, Activity, AlertTriangle, CheckCircle, Trash2, X, Database } from 'lucide-react';
+import toast,{Toaster} from 'react-hot-toast';
 
 export default function DashboardPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -151,7 +152,7 @@ export default function DashboardPage() {
         
         closePopup()
         
-        alert('Server created successfully!')
+        toast.success('Server created successfully!')
         fetchServer()
       } else {
         const errorData = await response.json()
@@ -183,7 +184,7 @@ export default function DashboardPage() {
         
         closePopup()
         
-        alert('Database created successfully!')
+        toast.success('Database created successfully!')
         fetchDatabase()
       } else {
         const errorData = await response.json()
@@ -199,7 +200,7 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
-     
+     <Toaster position="top-center" reverseOrder={false} />
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"> 
       <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 shadow-lg"><Navbar />
         <div className="max-w-7xl mx-auto px-6 py-8">

@@ -4,13 +4,20 @@ import { useParams, useRouter } from 'next/navigation';
 import { apiGet, apiPost } from '@/lib/api';
 import ProtectedRoute from '@/components/protected-route';
 import Navbar from '@/app/components/Navbar';
-import { Plus, Table, Trash2, Database, Columns3, Key, X } from 'lucide-react';
+import { Plus, Table, Trash2, Database, Columns3, Key, X, Edit, Eye } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 export default function DatabasePage() {
   const { databasename } = useParams();
   const router = useRouter();
   const [database, setDatabase] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isDataPopupOpen, setIsDataPopupOpen] = useState(false);
+  const [isViewDataPopupOpen, setIsViewDataPopupOpen] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [tableColumns, setTableColumns] = useState([]);
+  const [tableData, setTableData] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -18,6 +25,7 @@ export default function DatabasePage() {
     description: '',
     columns: []
   });
+  const [rowData, setRowData] = useState({});
 
   async function fetchData() {
     try {
@@ -37,12 +45,58 @@ export default function DatabasePage() {
     }
   }
 
+  async function fetchTableColumns(tableName) {
+    try {
+      const response = await apiGet(`/get_table_columns/${databasename}/${tableName}`);
+      if (response && response.ok) {
+        const result = await response.json();
+        setTableColumns(result.columns || []);
+        const initialData = {};
+        result.columns.forEach(col => {
+          if (col.name !== 'id' && col.extra !== 'auto_increment') {
+            initialData[col.name] = '';
+          }
+        });
+        setRowData(initialData);
+      }
+    } catch (err) {
+      console.error('Error fetching table columns:', err);
+    }
+  }
+
+  async function fetchTableData(tableName) {
+    try {
+      const response = await apiGet(`/get_table_data/${databasename}/${tableName}`);
+      if (response && response.ok) {
+        const result = await response.json();
+        setTableData(result.data || []);
+        setTableColumns(result.columns || []);
+      }
+    } catch (err) {
+      console.error('Error fetching table data:', err);
+    }
+  }
+
   useEffect(() => {
     fetchData();
   }, [databasename]);
 
   const handleCreateNew = () => {
     setIsPopupOpen(true);
+    setError('');
+  };
+
+  const handleAddData = async (tableName) => {
+    setSelectedTable(tableName);
+    await fetchTableColumns(tableName);
+    setIsDataPopupOpen(true);
+    setError('');
+  };
+
+  const handleViewData = async (tableName) => {
+    setSelectedTable(tableName);
+    await fetchTableData(tableName);
+    setIsViewDataPopupOpen(true);
     setError('');
   };
 
@@ -56,11 +110,33 @@ export default function DatabasePage() {
     setError('');
   };
 
+  const closeDataPopup = () => {
+    setIsDataPopupOpen(false);
+    setSelectedTable(null);
+    setTableColumns([]);
+    setRowData({});
+    setError('');
+  };
+
+  const closeViewDataPopup = () => {
+    setIsViewDataPopupOpen(false);
+    setSelectedTable(null);
+    setTableData([]);
+    setTableColumns([]);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleRowDataChange = (columnName, value) => {
+    setRowData(prev => ({
+      ...prev,
+      [columnName]: value
     }));
   };
 
@@ -80,7 +156,7 @@ export default function DatabasePage() {
         const result = await response.json();
         console.log('Table created successfully:', result);
         closePopup();
-        alert('Table created successfully!');
+        toast.success('Table created successfully!');
         fetchData();
       } else {
         const errorData = await response.json();
@@ -94,11 +170,59 @@ export default function DatabasePage() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDataSubmit = async () => {
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const response = await apiPost(`/insert_data/${databasename}/${selectedTable}`, {
+        data: rowData
+      });
+
+      if (response && response.ok) {
+        const result = await response.json();
+        console.log('Data inserted successfully:', result);
+        closeDataPopup();
+        toast.success('Data inserted successfully!');
+        fetchData();
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to insert data');
+      }
+    } catch (err) {
+      console.error('Error inserting data:', err);
+      setError('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteRow = async (id) => {
+    if (confirm('Are you sure you want to delete this row?')) {
+      try {
+        const response = await apiPost(`/delete_data/${databasename}/${selectedTable}`, {
+          id: id
+        });
+
+        if (response && response.ok) {
+          toast.success('Row deleted successfully!');
+          await fetchTableData(selectedTable);
+        } else {
+          const errorData = await response.json();
+          toast(errorData.message || 'Failed to delete row');
+        }
+      } catch (err) {
+        console.error('Error deleting row:', err);
+        toast('Network error. Please try again.');
+      }
+    }
+  };
+
+  const handleDelete = async (tableName) => {
     if (confirm('Are you sure you want to delete this table? This action cannot be undone.')) {
       try {
         const response = await apiPost(`/delete_table/${databasename}`, {
-          id: id,
+          name: tableName,
         });
 
         if (response && response.ok) {
@@ -113,25 +237,25 @@ export default function DatabasePage() {
       }
     }
   };
+
   const addColumn = () => {
-  setFormData({
-    ...formData,
-    columns: [...formData.columns, { name: '', type: '', length: '', nullable: false, primary: false }]
-  });
-};
+    setFormData({
+      ...formData,
+      columns: [...formData.columns, { name: '', type: '', length: '', nullable: false, primary: false }]
+    });
+  };
 
-const removeColumn = (index) => {
-  const newCols = [...formData.columns];
-  newCols.splice(index, 1);
-  setFormData({ ...formData, columns: newCols });
-};
+  const removeColumn = (index) => {
+    const newCols = [...formData.columns];
+    newCols.splice(index, 1);
+    setFormData({ ...formData, columns: newCols });
+  };
 
-const handleColumnChange = (index, field, value) => {
-  const newCols = [...formData.columns];
-  newCols[index][field] = value;
-  setFormData({ ...formData, columns: newCols });
-};
-
+  const handleColumnChange = (index, field, value) => {
+    const newCols = [...formData.columns];
+    newCols[index][field] = value;
+    setFormData({ ...formData, columns: newCols });
+  };
 
   if (!database) return <p>Loading...</p>;
 
@@ -139,10 +263,11 @@ const handleColumnChange = (index, field, value) => {
 
   return (
     <ProtectedRoute>
-      
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         {/* Header Section */}
-        <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 shadow-lg"><Navbar />
+        <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 shadow-lg">
+          <Navbar />
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="flex items-center justify-between">
               <div>
@@ -232,7 +357,7 @@ const handleColumnChange = (index, field, value) => {
                         </div>
                       </div>
                       <button
-                        onClick={() => handleDelete(table.name)}
+                        onClick={() => handleDelete(table)}
                         className="text-gray-400 hover:text-red-400 transition-colors"
                       >
                         <Trash2 size={20} />
@@ -240,29 +365,21 @@ const handleColumnChange = (index, field, value) => {
                     </div>
                   
                     <div className="space-y-3">
-                      {table.description && (
-                        <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                          <p className="text-sm text-gray-300">{table.description}</p>
-                        </div>
-                      )}
-                    
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                          <p className="text-xs text-gray-400 mb-1 font-medium">Columns</p>
-                          <p className="text-lg font-semibold text-white">{table.columns || 0}</p>
-                        </div>
-                        <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                          <p className="text-xs text-gray-400 mb-1 font-medium">Rows</p>
-                          <p className="text-lg font-semibold text-white">{(table.rows || 0).toLocaleString()}</p>
-                        </div>
-                      </div>
-                    
-                      <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                        <p className="text-xs text-gray-400 mb-1 font-medium">Details</p>
-                        <div className="text-xs text-gray-300 space-y-1">
-                          <p>Size: {table.size || '0 KB'}</p>
-                          <p>Created: {table.createdAt ? new Date(table.createdAt).toLocaleDateString() : 'N/A'}</p>
-                        </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleAddData(table)}
+                          className="flex-1 flex items-center justify-center gap-2 p-3 bg-green-500/20 hover:bg-green-500/30 rounded-lg border border-green-500/30 transition-colors"
+                        >
+                          <Plus className="text-green-400" size={16} />
+                          <span className="text-sm text-green-300 font-medium">Add Data</span>
+                        </button>
+                        <button
+                          onClick={() => handleViewData(table)}
+                          className="flex-1 flex items-center justify-center gap-2 p-3 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg border border-blue-500/30 transition-colors"
+                        >
+                          <Eye className="text-blue-400" size={16} />
+                          <span className="text-sm text-blue-300 font-medium">View Data</span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -287,12 +404,11 @@ const handleColumnChange = (index, field, value) => {
           )}
         </div>
 
-        {/* Modal */}
+        {/* Create Table Modal */}
         {isPopupOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-            <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full mx-auto border border-white/20">
-              {/* Modal Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full mx-auto border border-white/20 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-6 border-b border-white/10 sticky top-0 bg-slate-800 z-10">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-purple-500/20 rounded-lg">
                     <Plus className="text-purple-300" size={24} />
@@ -309,7 +425,6 @@ const handleColumnChange = (index, field, value) => {
                 </button>
               </div>
 
-              {/* Modal Body */}
               <div className="p-6">
                 {error && (
                   <div className="mb-4 bg-red-500/20 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg flex items-start gap-2">
@@ -350,73 +465,64 @@ const handleColumnChange = (index, field, value) => {
                     />
                   </div>
                 </div>
-                {/* Column Builder Section */}
-<div className="mt-6">
-  <h4 className="text-md font-semibold text-gray-200 mb-3">Table Columns</h4>
 
-  {formData.columns.map((col, index) => (
-    <div key={index} className="grid grid-cols-6 gap-2 mb-3">
-      <input
-        type="text"
-        placeholder="Column name"
-        value={col.name}
-        onChange={(e) => handleColumnChange(index, 'name', e.target.value)}
-        className="col-span-2 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500"
-      />
-      <select
-        value={col.type}
-        onChange={(e) => handleColumnChange(index, 'type', e.target.value)}
-        className="w-full col-span-1 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-black"
-      >
-        <option value="">Type</option>
-        <option value="INT">INT</option>
-        <option value="VARCHAR">VARCHAR</option>
-        <option value="TEXT">TEXT</option>
-        <option value="DATE">DATE</option>
-        <option value="TIMESTAMP">TIMESTAMP</option>
-      </select>
-      <input
-        type="number"
-        placeholder="Length"
-        value={col.length || ''}
-        onChange={(e) => handleColumnChange(index, 'length', e.target.value)}
-        className="col-span-1 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
-      />
-      <label className="flex items-center gap-1 text-gray-300">
-        <input
-          type="checkbox"
-          checked={col.primary || false}
-          onChange={(e) => handleColumnChange(index, 'primary', e.target.checked)}
-        />
-        PK
-      </label>
-      <label className="flex items-center gap-1 text-gray-300">
-        <input
-          type="checkbox"
-          checked={col.nullable || false}
-          onChange={(e) => handleColumnChange(index, 'nullable', e.target.checked)}
-        />
-        Null
-      </label>
-      <button
-        onClick={() => removeColumn(index)}
-        className="text-red-400 hover:text-red-600"
-      >
-        ✕
-      </button>
-    </div>
-  ))}
+                <div className="mt-6">
+                  <h4 className="text-md font-semibold text-gray-200 mb-3">Table Columns</h4>
 
-  <button
-    type="button"
-    onClick={addColumn}
-    className="mt-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg"
-  >
-    + Add Column
-  </button>
-</div>
+                  {formData.columns.map((col, index) => (
+                    <div key={index} className="grid grid-cols-6 gap-2 mb-3">
+                      <input
+                        type="text"
+                        placeholder="Column name"
+                        value={col.name}
+                        onChange={(e) => handleColumnChange(index, 'name', e.target.value)}
+                        className="col-span-2 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500"
+                      />
+                      <select
+                        value={col.type}
+                        onChange={(e) => handleColumnChange(index, 'type', e.target.value)}
+                        className="w-full col-span-1 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                      >
+                        <option value="">Type</option>
+                        <option value="INT">INT</option>
+                        <option value="VARCHAR">VARCHAR</option>
+                        <option value="TEXT">TEXT</option>
+                        <option value="DATE">DATE</option>
+                        <option value="TIMESTAMP">TIMESTAMP</option>
+                      </select>
+                      <input
+                        type="number"
+                        placeholder="Length"
+                        value={col.length || ''}
+                        onChange={(e) => handleColumnChange(index, 'length', e.target.value)}
+                        className="col-span-1 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                      />
+                      <label className="flex items-center gap-1 text-gray-300 text-xs">
+                        <input
+                          type="checkbox"
+                          checked={col.primary || false}
+                          onChange={(e) => handleColumnChange(index, 'primary', e.target.checked)}
+                        />
+                        PK
+                      </label>
+                      <button
+                        onClick={() => removeColumn(index)}
+                        className="text-red-400 hover:text-red-600"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
 
-                {/* Modal Footer */}
+                  <button
+                    type="button"
+                    onClick={addColumn}
+                    className="mt-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                  >
+                    + Add Column
+                  </button>
+                </div>
+
                 <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-white/10">
                   <button
                     type="button"
@@ -441,6 +547,177 @@ const handleColumnChange = (index, field, value) => {
                     )}
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add Data Modal */}
+        {isDataPopupOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border border-white/20 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-6 border-b border-white/10 sticky top-0 bg-slate-800 z-10">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-500/20 rounded-lg">
+                    <Plus className="text-green-300" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">
+                    Add Data to {selectedTable}
+                  </h3>
+                </div>
+                <button
+                  onClick={closeDataPopup}
+                  className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="p-6">
+                {error && (
+                  <div className="mb-4 bg-red-500/20 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg flex items-start gap-2">
+                    <span className="text-red-400 font-bold">!</span>
+                    <span className="text-sm">{error}</span>
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  {tableColumns.filter(col => col.name !== 'id' && col.extra !== 'auto_increment').map((column) => (
+                    <div key={column.name}>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">
+                        {column.name}
+                        <span className="text-xs text-gray-500 ml-2">({column.type})</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={rowData[column.name] || ''}
+                        onChange={(e) => handleRowDataChange(column.name, e.target.value)}
+                        placeholder={`Enter ${column.name}`}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={closeDataPopup}
+                    className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDataSubmit}
+                    disabled={isSubmitting}
+                    className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                        Inserting...
+                      </div>
+                    ) : (
+                      'Insert Data'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View Data Modal */}
+        {isViewDataPopupOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-6xl w-full mx-auto border border-white/20 max-h-[90vh] overflow-hidden flex flex-col">
+              <div className="flex items-center justify-between p-6 border-b border-white/10 bg-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <Eye className="text-blue-300" size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">
+                      {selectedTable} Data
+                    </h3>
+                    <p className="text-sm text-gray-400">{tableData.length} rows</p>
+                  </div>
+                </div>
+                <button
+                  onClick={closeViewDataPopup}
+                  className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-auto p-6">
+                {tableData.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead className="sticky top-0 bg-slate-700/50 backdrop-blur-sm">
+                        <tr>
+                          {tableColumns.map((col) => (
+                            <th key={col.name} className="px-4 py-3 text-left text-sm font-semibold text-gray-300 border-b border-white/10">
+                              {col.name}
+                            </th>
+                          ))}
+                          <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300 border-b border-white/10">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableData.map((row, index) => (
+                          <tr key={index} className="hover:bg-white/5 transition-colors border-b border-white/5">
+                            {tableColumns.map((col) => (
+                              <td key={col.name} className="px-4 py-3 text-sm text-gray-300">
+                                {row[col.name] !== null ? String(row[col.name]) : <span className="text-gray-500 italic">NULL</span>}
+                              </td>
+                            ))}
+                            <td className="px-4 py-3">
+                              <button
+                                onClick={() => handleDeleteRow(row.id)}
+                                className="text-red-400 hover:text-red-300 p-1 hover:bg-red-500/20 rounded transition-colors"
+                                title="Delete row"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <div className="p-4 bg-white/5 rounded-full mb-4">
+                      <Database className="text-gray-500" size={40} />
+                    </div>
+                    <p className="text-gray-400 text-lg">No data in this table</p>
+                    <p className="text-gray-500 text-sm mt-2">Add some data to get started</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-6 border-t border-white/10 bg-slate-800 flex justify-between items-center">
+                <button
+                  onClick={() => {
+                    closeViewDataPopup();
+                    handleAddData(selectedTable);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-300 rounded-lg transition-colors"
+                >
+                  <Plus size={16} />
+                  Add New Row
+                </button>
+                <button
+                  onClick={closeViewDataPopup}
+                  className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>

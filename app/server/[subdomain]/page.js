@@ -7,6 +7,7 @@ import ProtectedRoute from '@/components/protected-route';
 import Navbar from '@/app/components/Navbar';
 import { CirclePlus, X, Server, Globe, Trash2 } from 'lucide-react';
 import CopyButton from '@/app/components/CopyButton';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Page() {
   const { subdomain } = useParams();
@@ -109,7 +110,7 @@ export default function Page() {
         const result = await response.json();
         console.log('Server created successfully:', result);
         closePopup();
-        alert('Server created successfully!');
+        toast.success('Server created successfully!');
         fetchData();
       } else {
         const errorData = await response.json();
@@ -127,7 +128,7 @@ export default function Page() {
 
   return (
     <ProtectedRoute>
-      
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"><Navbar />
         {/* Header Section */}
         <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 shadow-lg">
