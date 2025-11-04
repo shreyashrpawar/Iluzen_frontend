@@ -1,6 +1,12 @@
 'use client';
 import React, { useState } from 'react';
-import { ArrowRight, Check, Code, Zap, Globe, Play, Star, Users, Database, Shield, Clock, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, Code, Zap, Globe, Play, Star, Users, Database, Shield, Clock, Sparkles, Server, Table, Eye, Plus } from 'lucide-react';
+import { Head } from 'next/head';
+
+export const metadata = {
+  title: 'Ilusion - Mock APIs & Virtual Databases in Seconds',
+  description: 'Create instant mock API endpoints and manage virtual MySQL databases. Build, test, and prototype without waiting for backend infrastructure.',
+};
 
 const Home = () => {
   const [email, setEmail] = useState('');
@@ -8,44 +14,74 @@ const Home = () => {
 
   const features = [
     {
-      icon: <Zap className="w-6 h-6" />,
-      title: "Lightning Fast",
-      description: "Generate mock APIs in seconds. No configuration needed, just start building."
+      icon: <Server className="w-6 h-6" />,
+      title: "Mock API Servers",
+      description: "Create instant mock API endpoints with custom responses in seconds."
     },
     {
       icon: <Database className="w-6 h-6" />,
-      title: "Realistic Data",
-      description: "Auto-generated realistic data that mirrors production scenarios perfectly."
+      title: "Virtual Databases",
+      description: "Create and manage virtual MySQL databases with full table control."
+    },
+    {
+      icon: <Table className="w-6 h-6" />,
+      title: "Visual Data Editor",
+      description: "Design tables, add columns, and manage data with an intuitive interface."
     },
     {
       icon: <Shield className="w-6 h-6" />,
-      title: "Secure & Reliable",
-      description: "Enterprise-grade security with 99.9% uptime guarantee for your projects."
-    },
-    {
-      icon: <Globe className="w-6 h-6" />,
-      title: "Global CDN",
-      description: "Fast response times worldwide with our distributed edge network."
+      title: "Secure & Isolated",
+      description: "Every database is isolated and secure with user-level access control."
     }
   ];
 
   const useCases = [
-    { title: "Frontend Development", description: "Build UIs without backend dependencies" },
-    { title: "API Testing", description: "Test edge cases and error scenarios easily" },
-    { title: "Prototyping", description: "Rapid prototyping with realistic data flows" },
-    { title: "Team Collaboration", description: "Share mock endpoints across your team" }
+    { 
+      icon: <Code className="w-5 h-5" />,
+      title: "Frontend Development", 
+      description: "Build UIs without backend dependencies using mock APIs and test databases" 
+    },
+    { 
+      icon: <Zap className="w-5 h-5" />,
+      title: "Rapid Prototyping", 
+      description: "Quickly prototype with realistic data structures and API responses" 
+    },
+    { 
+      icon: <Eye className="w-5 h-5" />,
+      title: "API Testing", 
+      description: "Test edge cases, error scenarios, and data flows easily" 
+    },
+    { 
+      icon: <Users className="w-5 h-5" />,
+      title: "Team Collaboration", 
+      description: "Share mock endpoints and databases across your development team" 
+    }
+  ];
+
+  const databaseFeatures = [
+    "Create unlimited virtual databases",
+    "Design custom table structures",
+    "Add, view, and manage data visually",
+    "Support for multiple data types",
+    "Auto-generated primary keys",
+    "Real-time data operations"
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <Head>
+      <title>Ilusion - Mock APIs & Virtual Databases in Seconds</title>
+      <meta name="description" content="Create instant mock API endpoints and manage virtual MySQL databases. Build, test, and prototype without waiting for backend infrastructure." />
+    </Head>
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-slate-900/50 backdrop-blur-lg z-50 border-b border-white/10">
+      <nav className="fixed top-0 w-full bg-slate-900/80 backdrop-blur-lg z-50 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
@@ -56,9 +92,11 @@ const Home = () => {
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
-               <a href="/login">Login</a>
-                
+              <a href="#api" className="text-white/80 hover:text-white transition-colors">Mock APIs</a>
+              <a href="#features" className="text-white/80 hover:text-white transition-colors">Features</a>
+              <a href="#database" className="text-white/80 hover:text-white transition-colors">Database</a>
+              <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-purple-500/50">
+                <a href="/login">Get Started</a>
               </button>
             </div>
           </div>
@@ -68,64 +106,63 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
+            <Sparkles className="w-4 h-4 text-purple-400" />
+            <span className="text-sm text-white/90">Now with Virtual Database Management</span>
+          </div>
           
           <div className="max-w-4xl mx-auto">
             <h1 className="text-6xl md:text-7xl font-bold text-white mb-8 leading-tight">
-              Build Faster with
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient"> Instant Mock APIs</span>
+              Mock APIs & Virtual
+              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"> Databases</span>
+              <br />in Seconds
             </h1>
             <p className="text-xl md:text-2xl text-white/80 mb-12 leading-relaxed max-w-3xl mx-auto">
-              Stop waiting for backend teams. Create production-ready mock APIs in seconds and accelerate your frontend development workflow.
+              Create instant mock API endpoints and manage virtual MySQL databases. Build, test, and prototype without waiting for backend infrastructure.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center gap-2 group shadow-lg shadow-purple-500/50">
-                Start Building Free
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              <a href="/register">
+                <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center gap-2 group shadow-lg shadow-purple-500/50">
+                  Start Building Free
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </a>
               <button className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300 flex items-center gap-2 backdrop-blur-sm">
                 <Play className="w-5 h-5" />
                 Watch Demo
               </button>
             </div>
 
-            {/* Code Preview */}
-            <div className="max-w-2xl mx-auto bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-2xl">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                <div className="w-3 h-3 rounded-full bg-green-400"></div>
-              </div>
-              <pre className="text-left text-sm text-white/90 overflow-x-auto">
-                <code>{`fetch('https://api.ilusion.io/users')
+            {/* Dual Code Preview */}
+            <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-2xl">
+                <div className="flex items-center gap-2 mb-4">
+                  <Server className="w-4 h-4 text-purple-400" />
+                  <span className="text-white/70 text-sm font-semibold">Mock API</span>
+                </div>
+                <pre className="text-left text-sm text-white/90 overflow-x-auto">
+                  <code>{`fetch('https://api.ilusion.io/users')
   .then(res => res.json())
   .then(data => console.log(data))`}</code>
-              </pre>
+                </pre>
+              </div>
+              
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10 shadow-2xl">
+                <div className="flex items-center gap-2 mb-4">
+                  <Database className="w-4 h-4 text-blue-400" />
+                  <span className="text-white/70 text-sm font-semibold">Virtual Database</span>
+                </div>
+                <pre className="text-left text-sm text-white/90 overflow-x-auto">
+                  <code>{`mysql -h ilusion.io -u user
+mysql> USE myapp_db;
+mysql> SELECT * FROM users;`}</code>
+                </pre>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Stats Section */}
-      {/* <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: "10K+", label: "Active Developers" },
-              { value: "1M+", label: "API Calls/Day" },
-              { value: "99.9%", label: "Uptime" },
-              { value: "50ms", label: "Avg Response Time" }
-            ].map((stat, idx) => (
-              <div key={idx} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-white/60">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
 
       {/* Features Section */}
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
@@ -135,7 +172,7 @@ const Home = () => {
               Everything you need to move fast
             </h2>
             <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              Powerful features designed for modern development teams
+              Powerful features for modern development workflows
             </p>
           </div>
 
@@ -146,13 +183,189 @@ const Home = () => {
                 className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer group"
                 onMouseEnter={() => setActiveFeature(idx)}
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-white">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
                 <p className="text-white/70">{feature.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mock API Features Section */}
+      <section id="api" className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="relative order-2 lg:order-1">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-white/10 shadow-2xl">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-white">api-server</h3>
+                  <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
+                    New Request
+                  </button>
+                </div>
+                
+                <div className="space-y-3">
+                  {[
+                    { name: 'Get Users', method: 'GET', url: '/api/users', color: 'blue' },
+                    { name: 'Create User', method: 'POST', url: '/api/users', color: 'green' },
+                    { name: 'Update Profile', method: 'POST', url: '/api/profile', color: 'green' },
+                    { name: 'Get Posts', method: 'GET', url: '/api/posts', color: 'blue' }
+                  ].map((request, idx) => (
+                    <div key={idx} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                            <Server className="w-4 h-4 text-purple-400" />
+                          </div>
+                          <div>
+                            <div className="text-white font-medium">{request.name}</div>
+                            <div className="text-xs text-white/50">{request.url}</div>
+                          </div>
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          request.color === 'blue' 
+                            ? 'bg-blue-500/20 text-blue-300' 
+                            : 'bg-green-500/20 text-green-300'
+                        }`}>
+                          {request.method}
+                        </span>
+                      </div>
+                      <div className="text-xs text-white/40 font-mono bg-black/20 rounded p-2 mt-2">
+                        https://api-server.ilusion.io{request.url}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -left-4 w-24 h-24 bg-purple-500/20 rounded-full blur-2xl"></div>
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-pink-500/20 rounded-full blur-2xl"></div>
+            </div>
+
+            <div className="order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 bg-purple-500/20 backdrop-blur-sm border border-purple-400/30 rounded-full px-4 py-2 mb-6">
+                <Server className="w-4 h-4 text-purple-400" />
+                <span className="text-sm text-purple-300">Instant Mock API Server</span>
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                Create APIs in Seconds
+              </h2>
+              <p className="text-xl text-white/70 mb-8">
+                Build instant mock API endpoints with custom responses. No backend setup, no configuration hassle. Just create and start using.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                {[
+                  "Create unlimited mock API endpoints",
+                  "Custom JSON responses for each route",
+                  "Support for GET and POST methods",
+                  "Share endpoints with your team",
+                  "Auto-generated subdomain URLs",
+                  "Copy-paste ready endpoints"
+                ].map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-white/80">{feature}</span>
+                  </div>
+                ))}
+              </div>
+              
+              <a href="/register">
+                <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-purple-500/50">
+                  Create Your API Server
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Database Features Section */}
+      <section id="database" className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2 mb-6">
+                <Database className="w-4 h-4 text-blue-400" />
+                <span className="text-sm text-blue-300">Virtual Database Management</span>
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                Manage Databases Like a Pro
+              </h2>
+              <p className="text-xl text-white/70 mb-8">
+                Create virtual MySQL databases, design tables visually, and manage data with an intuitive interface. No server setup required.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                {databaseFeatures.map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-white/80">{feature}</span>
+                  </div>
+                ))}
+              </div>
+              
+              <a href="/register">
+                <button className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-blue-500/50">
+                  Create Your Database
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </a>
+            </div>
+            
+            <div className="relative">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-white/10 shadow-2xl">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-white">production_db</h3>
+                  <button className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
+                    New Table
+                  </button>
+                </div>
+                
+                <div className="space-y-3">
+                  {['users', 'posts', 'comments', 'categories'].map((table, idx) => (
+                    <div key={idx} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                            <Table className="w-4 h-4 text-purple-400" />
+                          </div>
+                          <div>
+                            <div className="text-white font-medium">{table}</div>
+                            {/* <div className="text-xs text-white/50">{Math.floor(Math.random() * 100)} rows</div> */}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="p-2 bg-green-500/20 hover:bg-green-500/30 rounded-lg transition-colors">
+                            <Plus className="w-3 h-3 text-green-400" />
+                          </button>
+                          <button className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-colors">
+                            <Eye className="w-3 h-3 text-blue-400" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue-500/20 rounded-full blur-2xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-purple-500/20 rounded-full blur-2xl"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -173,8 +386,8 @@ const Home = () => {
             {useCases.map((useCase, idx) => (
               <div key={idx} className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-purple-400/50 transition-all duration-300">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Check className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                    {useCase.icon}
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-white mb-2">{useCase.title}</h3>
@@ -190,15 +403,28 @@ const Home = () => {
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-3xl p-12 border border-white/20 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to build something amazing?
-            </h2>
-            <p className="text-xl text-white/80 mb-8">
-              Join thousands of developers who ship faster with Ilusion
-            </p>
-          
-     
+          <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-3xl p-12 border border-white/20 text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 animate-pulse"></div>
+            <div className="relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                Ready to build something amazing?
+              </h2>
+              <p className="text-xl text-white/80 mb-8">
+                Join developers who ship faster with instant mock APIs and virtual databases
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/register">
+                  <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-purple-500/50">
+                    Get Started Free
+                  </button>
+                </a>
+                <a href="/login">
+                  <button className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
+                    Sign In
+                  </button>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -215,22 +441,31 @@ const Home = () => {
                 <span className="text-white text-xl font-bold">Ilusion</span>
               </div>
               <p className="text-white/60 max-w-md">
-                The fastest way to create mock APIs for modern development teams.
+                The fastest way to create mock APIs and virtual databases for modern development teams.
               </p>
             </div>
             
+            <div>
+              <h4 className="text-white font-semibold mb-4">Product</h4>
+              <ul className="space-y-2">
+                <li><a href="#api" className="text-white/60 hover:text-white transition-colors">Mock APIs</a></li>
+                <li><a href="#features" className="text-white/60 hover:text-white transition-colors">Features</a></li>
+                <li><a href="#database" className="text-white/60 hover:text-white transition-colors">Database</a></li>
+                <li><a href="/login" className="text-white/60 hover:text-white transition-colors">Pricing</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-white font-semibold mb-4">Company</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-white/60 hover:text-white transition-colors">About</a></li>
+                <li><a href="#" className="text-white/60 hover:text-white transition-colors">Contact</a></li>
+              </ul>
+            </div>
           </div>
           
           <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/60 text-sm">&copy; 2025 Ilusion. All rights reserved.</p>
-            <div className="flex items-center gap-6">
-              {/* <a href="#" className="text-white/60 hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
-              </a>
-              <a href="#" className="text-white/60 hover:text-white transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-              </a> */}
-            </div>
           </div>
         </div>
       </footer>

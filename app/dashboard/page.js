@@ -10,11 +10,21 @@ import toast,{Toaster} from 'react-hot-toast';
 export default function DashboardPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [isDatabasePopupOpen, setIsDatabasePopupOpen] = useState(false)
-  
+  const [isRemoteBasePopupOpen, setIsRemoteBasePopupOpen] = useState(false)
   const closeDatabasePopup = () => {
     setIsDatabasePopupOpen(false)
     setTableData({
       DatabaseName: '',
+      DatabasePassword: ''
+    })
+    setError('')
+  }
+    const closeRemotePopup = () => {
+    setIsRemoteBasePopupOpen(false)
+    setRemotetableData({
+      DatabaseHost: '',
+      DatabaseName: '',
+      DatabaseUsername: '',
       DatabasePassword: ''
     })
     setError('')
@@ -114,6 +124,53 @@ export default function DashboardPage() {
       ...prev,
       [name]: value
     }))
+  }
+  const [RemotetableData, setRemotetableData] = useState({
+    DatabaseHost: '',
+    DatabaseName: '',
+    DatabaseUsername: '',
+    DatabasePassword: ''
+  })
+    const handleRemoteTableChange = (e) => {
+    const { name, value } = e.target
+    setRemotetableData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+    const handleRemoteDatabaseSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError('')
+    console.log('Submitting remote table data:', RemotetableData);
+
+    try {
+      const response = await apiPost('/connect_remote_database', {
+        host: RemotetableData.DatabaseHost,
+        database_name: RemotetableData.DatabaseName,
+        username: RemotetableData.DatabaseUsername,
+        password: RemotetableData.DatabasePassword,
+      })
+
+      if (response && response.ok) {
+        const result = await response.json()
+        console.log('Remote Database connected successfully:', result)
+        
+        closeRemotePopup()
+        
+        toast.success('Remote Database connected successfully!')
+        fetchDatabase()
+      } else {
+        const errorData = await response.json()
+        setError(errorData.message || 'Failed to connect remote database')
+      }
+    } catch (err) {
+      console.error('Error connecting remote database:', err)
+      setError('Network error. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -269,6 +326,15 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          <div className="group" onClick={() => setIsRemoteBasePopupOpen(true)}>
+            <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-dashed border-white/30 hover:border-blue-400/70 aspect-square flex flex-col items-center justify-center p-6">
+              <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-500/30 transition-colors">
+                <Plus className="text-blue-300" size={32} />
+              </div>
+              <h3 className="text-sm font-semibold text-white text-center">Connect Remote Database</h3>
+            </div>
+          </div>
+
           {database && database.map((srv) => (
 
             <div key={srv.DATABASE_NAME} className="group">
@@ -397,6 +463,129 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     'Create Database'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+            {isRemoteBasePopupOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full mx-auto border border-white/20">
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500/20 rounded-lg">
+                  <Plus className="text-blue-300" size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-white">
+                  Connect Remote Database
+                </h3>
+              </div>
+              <button
+                onClick={closeRemotePopup}
+                className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6">
+              {error && (
+                <div className="mb-4 bg-red-500/20 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg flex items-start gap-2">
+                  <span className="text-red-400 font-bold">!</span>
+                  <span className="text-sm">{error}</span>
+                </div>
+              )}
+
+              <div className="space-y-5">
+                <div>
+                  <label htmlFor="DatabaseHost" className="block text-sm font-semibold text-gray-300 mb-2">
+                    Database Host
+                  </label>
+                  <input
+                    type="text"
+                    id="DatabaseHost"
+                    name="DatabaseHost"
+                    value={RemotetableData.DatabaseHost}
+                    onChange={handleRemoteTableChange}
+                    placeholder="e.g., Production API Server"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="DatabaseName" className="block text-sm font-semibold text-gray-300 mb-2">
+                    Database Name
+                  </label>
+                  <input
+                    type="text"
+                    id="DatabaseName"
+                    name="DatabaseName"
+                    value={RemotetableData.DatabaseName}
+                    onChange={handleRemoteTableChange}
+                    placeholder="e.g., Production API Server"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="serverSubdomain" className="block text-sm font-semibold text-gray-300 mb-2">
+                    Database Username
+                  </label>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      id="DatabaseUsername"
+                      name="DatabaseUsername"
+                      value={RemotetableData.DatabaseUsername}
+                      onChange={handleRemoteTableChange}
+                      placeholder="my-server"
+                      className="flex-1 px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-gray-400 focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="DatabasePassword" className="block text-sm font-semibold text-gray-300 mb-2">
+                    Database Password
+                  </label>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      id="DatabasePassword"
+                      name="DatabasePassword"
+                      value={RemotetableData.DatabasePassword}
+                      onChange={handleRemoteTableChange}
+                      placeholder="my-server"
+                      className="flex-1 px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={closePopup}
+                  className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRemoteDatabaseSubmit}
+                  disabled={isSubmitting}
+                  className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      Creating...
+                    </div>
+                  ) : (
+                    'Save Connection'
                   )}
                 </button>
               </div>
