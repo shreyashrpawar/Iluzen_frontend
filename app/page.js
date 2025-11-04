@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import { ArrowRight, Check, Code, Zap, Globe, Play, Star, Users, Database, Shield, Clock, Sparkles, Server, Table, Eye, Plus } from 'lucide-react';
-import { Head } from 'next/head';
 
 
 const Home = () => {
@@ -65,10 +64,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-    <Head>
-      <title>Ilusion - Mock APIs & Virtual Databases in Seconds</title>
-      <meta name="description" content="Create instant mock API endpoints and manage virtual MySQL databases. Build, test, and prototype without waiting for backend infrastructure." />
-    </Head>
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
