@@ -3,10 +3,6 @@ import React, { useState } from 'react';
 import { ArrowRight, Check, Code, Zap, Globe, Play, Star, Users, Database, Shield, Clock, Sparkles, Server, Table, Eye, Plus } from 'lucide-react';
 import { Head } from 'next/head';
 
-export const metadata = {
-  title: 'Ilusion - Mock APIs & Virtual Databases in Seconds',
-  description: 'Create instant mock API endpoints and manage virtual MySQL databases. Build, test, and prototype without waiting for backend infrastructure.',
-};
 
 const Home = () => {
   const [email, setEmail] = useState('');
