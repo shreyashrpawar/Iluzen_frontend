@@ -83,9 +83,10 @@ const Home = () => {
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#api" className="text-white/80 hover:text-white transition-colors">Mock APIs</a>
+              <a href="/remote-database" className="text-white/80 hover:text-white transition-colors">Remote Database</a>
+              {/* <a href="#api" className="text-white/80 hover:text-white transition-colors">Mock APIs</a>
               <a href="#features" className="text-white/80 hover:text-white transition-colors">Features</a>
-              <a href="#database" className="text-white/80 hover:text-white transition-colors">Database</a>
+              <a href="#database" className="text-white/80 hover:text-white transition-colors">Database</a> */}
               <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-purple-500/50">
                 <a href="/login">Get Started</a>
               </button>
@@ -314,6 +315,12 @@ mysql> SELECT * FROM users;`}</code>
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </a>
+                            <a href="/remote-database">
+                <button className="mt-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-blue-500/50">
+                  Connect Your Database
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </a>
             </div>
             
             <div className="relative">
@@ -437,12 +444,11 @@ mysql> SELECT * FROM users;`}</code>
             </div>
             
             <div>
-              <h4 className="text-white font-semibold mb-4">Product</h4>
+              <h4 className="text-white font-semibold mb-4">About Product</h4>
               <ul className="space-y-2">
                 <li><a href="#api" className="text-white/60 hover:text-white transition-colors">Mock APIs</a></li>
                 <li><a href="#features" className="text-white/60 hover:text-white transition-colors">Features</a></li>
                 <li><a href="#database" className="text-white/60 hover:text-white transition-colors">Database</a></li>
-                <li><a href="/login" className="text-white/60 hover:text-white transition-colors">Pricing</a></li>
               </ul>
             </div>
             
