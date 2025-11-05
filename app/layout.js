@@ -15,6 +15,9 @@ import { AuthProvider } from "@/lib/auth-context";
 export const metadata = {
   title: 'Ilusion - Mock APIs & Virtual Databases in Seconds',
   description: 'Create instant mock API endpoints and manage virtual MySQL databases. Build, test, and prototype without waiting for backend infrastructure.',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 

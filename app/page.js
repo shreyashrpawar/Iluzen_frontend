@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { ArrowRight, Check, Code, Zap, Globe, Play, Star, Users, Database, Shield, Clock, Sparkles, Server, Table, Eye, Plus } from 'lucide-react';
-
+import Image from 'next/image';
 
 const Home = () => {
   const [email, setEmail] = useState('');
@@ -77,7 +77,8 @@ const Home = () => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">I</span>
+                      <Image src="/favicon.ico" alt="Ilusion Logo" width={40} height={40} />
+
               </div>
               <span className="text-white text-xl font-bold">Ilusion</span>
             </div>

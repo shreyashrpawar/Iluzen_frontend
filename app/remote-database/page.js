@@ -1,9 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { apiGet, apiPost } from "../../lib/api";
-
-import { Database, Eye, Table, Lock, Unlock, AlertCircle, CheckCircle, Loader, ArrowRight, Server, Globe, Shield } from 'lucide-react';
+import { apiGet,apiPost } from '@/lib/api';
+import { Database, Eye, Table, Lock, Unlock, AlertCircle, CheckCircle, Loader, ArrowRight, Server, Globe, Shield, Maximize2, X, RefreshCw } from 'lucide-react';
 
 export default function RemoteDatabaseViewer() {
   const [connectionData, setConnectionData] = useState({
@@ -22,6 +21,9 @@ export default function RemoteDatabaseViewer() {
   const [tableData, setTableData] = useState([]);
   const [tableColumns, setTableColumns] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
+  const [isRefreshingTables, setIsRefreshingTables] = useState(false);
+  const [isRefreshingData, setIsRefreshingData] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,10 +36,8 @@ export default function RemoteDatabaseViewer() {
   const handleConnect = async () => {
     setIsConnecting(true);
     setError('');
-    console.log(connectionData);
+    
     try {
-        console.log(connectionData);
-      // API call to connect to remote database
       const response = await apiPost('/connect-remote-db', {
         method: 'POST',
         headers: {
@@ -61,8 +61,32 @@ export default function RemoteDatabaseViewer() {
     }
   };
 
+  const handleRefreshTables = async () => {
+    setIsRefreshingTables(true);
+    
+    try {
+      const response = await apiPost('/connect-remote-db', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(connectionData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setTables(result.tables || []);
+      }
+    } catch (err) {
+      console.error('Failed to refresh tables:', err);
+    } finally {
+      setIsRefreshingTables(false);
+    }
+  };
+
   const handleViewTable = async (tableName) => {
     setSelectedTable(tableName);
+    setIsRefreshingData(true);
     
     try {
       const response = await apiPost('/get-remote-table-data', {
@@ -83,6 +107,37 @@ export default function RemoteDatabaseViewer() {
       }
     } catch (err) {
       console.error('Failed to fetch table data:', err);
+    } finally {
+      setIsRefreshingData(false);
+    }
+  };
+
+  const handleRefreshData = async () => {
+    if (!selectedTable) return;
+    
+    setIsRefreshingData(true);
+    
+    try {
+      const response = await apiPost('/get-remote-table-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...connectionData,
+          table: selectedTable
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setTableData(result.data || []);
+        setTableColumns(result.columns || []);
+      }
+    } catch (err) {
+      console.error('Failed to refresh table data:', err);
+    } finally {
+      setIsRefreshingData(false);
     }
   };
 
@@ -338,10 +393,20 @@ export default function RemoteDatabaseViewer() {
               {/* Tables List */}
               <div className="lg:col-span-1">
                 <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
-                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <Table className="w-5 h-5 text-purple-400" />
-                    Tables ({tables.length})
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                      <Table className="w-5 h-5 text-purple-400" />
+                      Tables ({tables.length})
+                    </h3>
+                    <button
+                      onClick={handleRefreshTables}
+                      disabled={isRefreshingTables}
+                      className="p-2 bg-purple-500/20 hover:bg-purple-500/30 rounded-lg transition-colors disabled:opacity-50"
+                      title="Refresh tables"
+                    >
+                      <RefreshCw className={`w-4 h-4 text-purple-400 ${isRefreshingTables ? 'animate-spin' : ''}`} />
+                    </button>
+                  </div>
                   <div className="space-y-2 max-h-[600px] overflow-y-auto">
                     {tables.map((table, idx) => (
                       <button
@@ -372,13 +437,34 @@ export default function RemoteDatabaseViewer() {
                         <Eye className="w-5 h-5 text-blue-400" />
                         {selectedTable}
                       </h3>
-                      <span className="text-white/60 text-sm">{tableData.length} rows</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white/60 text-sm">{tableData.length} rows</span>
+                        <button
+                          onClick={handleRefreshData}
+                          disabled={isRefreshingData}
+                          className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-colors disabled:opacity-50"
+                          title="Refresh data"
+                        >
+                          <RefreshCw className={`w-4 h-4 text-blue-400 ${isRefreshingData ? 'animate-spin' : ''}`} />
+                        </button>
+                        <button
+                          onClick={() => setIsMaximized(true)}
+                          className="p-2 bg-purple-500/20 hover:bg-purple-500/30 rounded-lg transition-colors"
+                          title="Maximize view"
+                        >
+                          <Maximize2 className="w-4 h-4 text-purple-400" />
+                        </button>
+                      </div>
                     </div>
 
-                    {tableData.length > 0 ? (
-                      <div className="overflow-x-auto">
+                    {isRefreshingData ? (
+                      <div className="flex items-center justify-center py-12">
+                        <Loader className="w-8 h-8 text-purple-400 animate-spin" />
+                      </div>
+                    ) : tableData.length > 0 ? (
+                      <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
                         <table className="w-full border-collapse">
-                          <thead className="bg-slate-700/50">
+                          <thead className="bg-slate-700/50 sticky top-0">
                             <tr>
                               {tableColumns.map((col, idx) => (
                                 <th key={idx} className="px-4 py-3 text-left text-sm font-semibold text-gray-300 border-b border-white/10">
@@ -415,6 +501,83 @@ export default function RemoteDatabaseViewer() {
                 )}
               </div>
             </div>
+
+            {/* Maximized View Modal */}
+            {isMaximized && selectedTable && (
+              <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div className="bg-slate-800 rounded-2xl shadow-2xl w-full h-full max-w-[95vw] max-h-[95vh] border border-white/20 flex flex-col">
+                  {/* Modal Header */}
+                  <div className="flex items-center justify-between p-6 border-b border-white/10 bg-slate-800 rounded-t-2xl">
+                    <div className="flex items-center gap-3">
+                      <Eye className="w-6 h-6 text-blue-400" />
+                      <div>
+                        <h3 className="text-2xl font-bold text-white">{selectedTable}</h3>
+                        <p className="text-sm text-white/60">{tableData.length} rows</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleRefreshData}
+                        disabled={isRefreshingData}
+                        className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-colors disabled:opacity-50"
+                        title="Refresh data"
+                      >
+                        <RefreshCw className={`w-5 h-5 text-blue-400 ${isRefreshingData ? 'animate-spin' : ''}`} />
+                      </button>
+                      <button
+                        onClick={() => setIsMaximized(false)}
+                        className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors"
+                        title="Close"
+                      >
+                        <X className="w-5 h-5 text-red-400" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Modal Body */}
+                  <div className="flex-1 overflow-auto p-6">
+                    {isRefreshingData ? (
+                      <div className="flex items-center justify-center h-full">
+                        <Loader className="w-12 h-12 text-purple-400 animate-spin" />
+                      </div>
+                    ) : tableData.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        <table className="w-full border-collapse">
+                          <thead className="bg-slate-700/50 sticky top-0">
+                            <tr>
+                              {tableColumns.map((col, idx) => (
+                                <th key={idx} className="px-6 py-4 text-left text-sm font-semibold text-gray-300 border-b border-white/10">
+                                  <div className="flex flex-col">
+                                    <span>{col}</span>
+                                    {/* <span className="text-xs text-gray-500 font-normal">{col.type}</span> */}
+                                  </div>
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {tableData.map((row, rowIdx) => (
+                              <tr key={rowIdx} className="hover:bg-white/5 transition-colors border-b border-white/5">
+                                {tableColumns.map((col, colIdx) => (
+                                  <td key={colIdx} className="px-6 py-4 text-sm text-gray-300">
+                                    {row[col] !== null ? String(row[col]) : <span className="text-gray-500 italic">NULL</span>}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full text-white/60">
+                        <Table className="w-20 h-20 mb-4 opacity-50" />
+                        <p className="text-lg">No data in this table</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* CTA Section */}
             <div className="mt-12 bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm rounded-2xl p-8 border border-white/20 text-center">
