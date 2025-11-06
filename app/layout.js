@@ -17,6 +17,10 @@ export const metadata = {
   description: 'Create instant mock API endpoints and manage virtual MySQL databases. Build, test, and prototype without waiting for backend infrastructure.',
   icons: {
     icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  alternates: {
+    canonical: 'https://ilusion.io',
   },
 }
 
