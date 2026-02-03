@@ -18,7 +18,7 @@ export default function Page() {
   const [error, setError] = useState('');
   
   const getMethodColor = (type) => {
-    return type === 'GET' ? 'bg-blue-500/20 text-blue-300' : 'bg-green-500/20 text-green-300';
+    return type === 'GET' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700';
   };
 
   const [formData, setFormData] = useState({
@@ -129,14 +129,14 @@ export default function Page() {
   return (
     <ProtectedRoute>
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"><Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50"><Navbar />
         {/* Header Section */}
-        <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 shadow-lg">
+        <div className="bg-white/60 backdrop-blur-md border-b border-slate-200 shadow-sm">
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Server Requests</h1>
-                <p className="text-gray-300">Manage and monitor your API endpoints</p>
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">Server Requests</h1>
+                <p className="text-slate-600">Manage and monitor your API endpoints</p>
               </div>
               <button
                 onClick={handleCreateNew}
@@ -156,16 +156,16 @@ export default function Page() {
               {request.requests.map((req) => (
                 <div
                   key={req.id}
-                  className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-white/20 group hover:border-purple-400/50"
+                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 group hover:border-purple-400"
                 >
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-500/20 rounded-lg group-hover:bg-purple-500/30 transition-colors">
-                          <Server className="text-purple-300" size={24} />
+                        <div className="p-2 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                          <Server className="text-purple-600" size={24} />
                         </div>
                         <div>
-                          <h2 className="text-xl font-semibold text-white">{req.name}</h2>
+                          <h2 className="text-xl font-semibold text-slate-900">{req.name}</h2>
                           <span className={`inline-block mt-1 px-2 py-1 text-xs font-semibold rounded-full ${getMethodColor(req.type)}`}>
                             {req.type}
                           </span>
@@ -174,31 +174,31 @@ export default function Page() {
                       <div>
                         <Trash2 
                           onClick={() => deleteRequest(req.id)} 
-                          className="text-gray-400 hover:text-red-400 cursor-pointer transition-colors" 
+                          className="text-slate-400 hover:text-red-600 cursor-pointer transition-colors" 
                           size={22}
                         />
                       </div>
                     </div>
 
                     <div className="space-y-3">
-                      <div className="flex items-start gap-2 p-3 bg-white/5 rounded-lg border border-white/10">
-                        <Globe className="text-gray-400 mt-0.5 flex-shrink-0" size={16} />
-                        <p className="text-sm text-gray-300 break-all">{req.url}</p>
+                      <div className="flex items-start gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <Globe className="text-slate-500 mt-0.5 flex-shrink-0" size={16} />
+                        <p className="text-sm text-slate-700 break-all">{req.url}</p>
                       </div>
 
-                      <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                      <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
                         <div className='flex items-center justify-between mb-2'>
-                          <p className="text-xs text-gray-400 font-medium">Response Preview</p>
+                          <p className="text-xs text-slate-600 font-medium">Response Preview</p>
                           <CopyButton text={req.response} />
                         </div>
-                        <pre className="text-xs text-gray-300 font-mono overflow-x-auto">
+                        <pre className="text-xs text-slate-700 font-mono overflow-x-auto">
                           {req.response.length > 60 ? req.response.substring(0, 60) + '...' : req.response}
                         </pre>
                       </div>
 
-                      <div className="flex items-center gap-2 p-3 bg-white/5 rounded-lg border border-white/10">
-                        <p className="text-sm text-gray-400">Send to:</p>
-                        <p className="text-sm text-gray-300 break-all flex-1">{subdomain}.ilusion.io/{req.url}</p>
+                      <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <p className="text-sm text-slate-600">Send to:</p>
+                        <p className="text-sm text-slate-700 break-all flex-1">{subdomain}.ilusion.io/{req.url}</p>
                         <CopyButton text={'https://' + subdomain + '.ilusion.io/' + req.url} />
                       </div>
                     </div>
@@ -208,14 +208,14 @@ export default function Page() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-20">
-              <div className="p-6 bg-white/10 backdrop-blur-lg rounded-full shadow-lg mb-4 border border-white/20">
-                <Server className="text-gray-400" size={48} />
+              <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-full shadow-md mb-4 border border-purple-200">
+                <Server className="text-slate-600" size={48} />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">No requests yet</h3>
-              <p className="text-gray-400 mb-6">Get started by creating your first server request</p>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">No requests yet</h3>
+              <p className="text-slate-600 mb-6">Get started by creating your first server request</p>
               <button
                 onClick={handleCreateNew}
-                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-purple-500/50"
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 <CirclePlus size={20} />
                 Add New Request
@@ -226,21 +226,21 @@ export default function Page() {
 
         {/* Modal */}
         {isPopupOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-            <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full mx-auto border border-white/20">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full mx-auto border border-slate-200">
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div className="flex items-center justify-between p-6 border-b border-slate-100">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-500/20 rounded-lg">
-                    <CirclePlus className="text-purple-300" size={24} />
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <CirclePlus className="text-purple-600" size={24} />
                   </div>
-                  <h3 className="text-xl font-semibold text-white">
+                  <h3 className="text-xl font-semibold text-slate-900">
                     Create New Request
                   </h3>
                 </div>
                 <button
                   onClick={closePopup}
-                  className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
+                  className="text-slate-500 hover:text-slate-900 transition-colors p-1 hover:bg-slate-100 rounded-lg"
                 >
                   <X size={24} />
                 </button>
@@ -249,15 +249,15 @@ export default function Page() {
               {/* Modal Body */}
               <div className="p-6">
                 {error && (
-                  <div className="mb-4 bg-red-500/20 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg flex items-start gap-2">
-                    <span className="text-red-400 font-bold">!</span>
+                  <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-2">
+                    <span className="text-red-600 font-bold">!</span>
                     <span className="text-sm">{error}</span>
                   </div>
                 )}
 
                 <div className="space-y-5">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-gray-300 mb-2">
+                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
                       Request Name
                     </label>
                     <input
@@ -267,13 +267,13 @@ export default function Page() {
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="e.g., User Authentication API"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                       required
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="url" className="block text-sm font-semibold text-gray-300 mb-2">
+                    <label htmlFor="url" className="block text-sm font-semibold text-slate-700 mb-2">
                       Request URL
                     </label>
                     <input
@@ -282,14 +282,14 @@ export default function Page() {
                       name="url"
                       value={formData.url}
                       onChange={handleInputChange}
-                      placeholder="https://api.example.com/endpoint"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      placeholder="/api/users"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                       required
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="type" className="block text-sm font-semibold text-gray-300 mb-2">
+                    <label htmlFor="type" className="block text-sm font-semibold text-slate-700 mb-2">
                       Request Method
                     </label>
                     <select
@@ -297,7 +297,7 @@ export default function Page() {
                       name="type"
                       value={formData.type}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                       required
                     >
                       <option value="GET">GET</option>
@@ -306,7 +306,7 @@ export default function Page() {
                   </div>
 
                   <div>
-                    <label htmlFor="response" className="block text-sm font-semibold text-gray-300 mb-2">
+                    <label htmlFor="response" className="block text-sm font-semibold text-slate-700 mb-2">
                       Response (JSON)
                     </label>
                     <textarea
@@ -316,18 +316,18 @@ export default function Page() {
                       onChange={handleInputChange}
                       placeholder='{"key": "value", "status": "success"}'
                       rows={6}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                       required
                     />
                   </div>
                 </div>
 
                 {/* Modal Footer */}
-                <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={closePopup}
-                    className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                    className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
@@ -335,7 +335,7 @@ export default function Page() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                    className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                   >
                     {isSubmitting ? (
                       <div className="flex items-center gap-2">
