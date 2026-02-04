@@ -27,7 +27,13 @@ export default function Page() {
     url: '',
     type: 'GET',
     response: '',
+    response_type: 'manual',
+    database_name: '',
+    table_name: '',
   });
+
+  const [databases, setDatabases] = useState([]);
+  const [tables, setTables] = useState([]);
 
   async function fetchData() {
     try {
@@ -51,9 +57,11 @@ export default function Page() {
     fetchData();
   }, [subdomain]);
 
-  const handleCreateNew = () => {
+  const handleCreateNew = async () => {
     setIsPopupOpen(true);
     setError('');
+    // Fetch databases when opening the modal
+    await fetchDatabases();
   };
 
   const closePopup = () => {
@@ -64,16 +72,51 @@ export default function Page() {
       url: '',
       type: 'GET',
       response: '',
+      response_type: 'manual',
+      database_name: '',
+      table_name: '',
     });
+    setDatabases([]);
+    setTables([]);
     setError('');
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+
+    // Fetch tables when database is selected
+    if (name === 'database_name' && value) {
+      await fetchTables(value);
+    }
+  };
+
+  const fetchDatabases = async () => {
+    try {
+      const response = await apiGet('/databases');
+      if (response && response.ok) {
+        const result = await response.json();
+        setDatabases(result.databases || []);
+      }
+    } catch (err) {
+      console.error('Error fetching databases:', err);
+    }
+  };
+
+  const fetchTables = async (databaseName) => {
+    try {
+      const response = await apiGet(`/tables/${databaseName}`);
+      if (response && response.ok) {
+        const result = await response.json();
+        setTables(result.tables || []);
+      }
+    } catch (err) {
+      console.error('Error fetching tables:', err);
+      setTables([]);
+    }
   };
 
   const deleteRequest = async (id) => {
@@ -99,25 +142,36 @@ export default function Page() {
     setError('');
 
     try {
-      const response = await apiPost(`/get_server/${subdomain}`, {
+      const payload = {
         name: formData.name.trim(),
         url: formData.url.trim(),
         type: formData.type.trim(),
-        response: formData.response.trim(),
-      });
+        response_type: formData.response_type,
+      };
+
+      // Add appropriate fields based on response type
+      if (formData.response_type === 'manual') {
+        payload.response = formData.response.trim();
+      } else if (formData.response_type === 'database') {
+        payload.database_name = formData.database_name;
+        payload.table_name = formData.table_name;
+        payload.response = ''; // Empty for database type
+      }
+
+      const response = await apiPost(`/get_server/${subdomain}`, payload);
 
       if (response && response.ok) {
         const result = await response.json();
-        console.log('Server created successfully:', result);
+        console.log('Request created successfully:', result);
         closePopup();
-        toast.success('Server created successfully!');
+        toast.success('Request created successfully!');
         fetchData();
       } else {
         const errorData = await response.json();
-        setError(errorData.message || 'Failed to create server');
+        setError(errorData.message || 'Failed to create request');
       }
     } catch (err) {
-      console.error('Error creating server:', err);
+      console.error('Error creating request:', err);
       setError('Network error. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -305,21 +359,102 @@ export default function Page() {
                     </select>
                   </div>
 
+                  {/* Response Type Toggle */}
                   <div>
-                    <label htmlFor="response" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Response (JSON)
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Response Type
                     </label>
-                    <textarea
-                      id="response"
-                      name="response"
-                      value={formData.response}
-                      onChange={handleInputChange}
-                      placeholder='{"key": "value", "status": "success"}'
-                      rows={6}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                      required
-                    />
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="response_type"
+                          value="manual"
+                          checked={formData.response_type === 'manual'}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                        />
+                        <span className="text-slate-700">Manual JSON</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="response_type"
+                          value="database"
+                          checked={formData.response_type === 'database'}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                        />
+                        <span className="text-slate-700">Database Table</span>
+                      </label>
+                    </div>
                   </div>
+
+                  {/* Conditional Rendering based on response_type */}
+                  {formData.response_type === 'manual' ? (
+                    <div>
+                      <label htmlFor="response" className="block text-sm font-semibold text-slate-700 mb-2">
+                        Response (JSON)
+                      </label>
+                      <textarea
+                        id="response"
+                        name="response"
+                        value={formData.response}
+                        onChange={handleInputChange}
+                        placeholder='{"key": "value", "status": "success"}'
+                        rows={6}
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        required
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      {/* Database Selection */}
+                      <div>
+                        <label htmlFor="database_name" className="block text-sm font-semibold text-slate-700 mb-2">
+                          Select Database
+                        </label>
+                        <select
+                          id="database_name"
+                          name="database_name"
+                          value={formData.database_name}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                          required
+                        >
+                          <option value="">Choose a database...</option>
+                          {databases.map((db) => (
+                            <option key={db.DATABASE_NAME} value={db.DATABASE_NAME}>
+                              {db.DATABASE_NAME}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Table Selection */}
+                      <div>
+                        <label htmlFor="table_name" className="block text-sm font-semibold text-slate-700 mb-2">
+                          Select Table
+                        </label>
+                        <select
+                          id="table_name"
+                          name="table_name"
+                          value={formData.table_name}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                          required
+                          disabled={!formData.database_name}
+                        >
+                          <option value="">Choose a table...</option>
+                          {tables.map((table) => (
+                            <option key={table} value={table}>
+                              {table}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Modal Footer */}
