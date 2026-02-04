@@ -16,7 +16,7 @@ export default function Page() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  
+
   const getMethodColor = (type) => {
     return type === 'GET' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700';
   };
@@ -172,9 +172,9 @@ export default function Page() {
                         </div>
                       </div>
                       <div>
-                        <Trash2 
-                          onClick={() => deleteRequest(req.id)} 
-                          className="text-slate-400 hover:text-red-600 cursor-pointer transition-colors" 
+                        <Trash2
+                          onClick={() => deleteRequest(req.id)}
+                          className="text-slate-400 hover:text-red-600 cursor-pointer transition-colors"
                           size={22}
                         />
                       </div>
@@ -198,8 +198,8 @@ export default function Page() {
 
                       <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
                         <p className="text-sm text-slate-600">Send to:</p>
-                        <p className="text-sm text-slate-700 break-all flex-1">{subdomain}.ilusion.io/{req.url}</p>
-                        <CopyButton text={'https://' + subdomain + '.ilusion.io/' + req.url} />
+                        <p className="text-sm text-slate-700 break-all flex-1">{subdomain}.ilusion.one{req.url}</p>
+                        <CopyButton text={'https://' + subdomain + '.ilusion.one' + req.url} />
                       </div>
                     </div>
                   </div>
