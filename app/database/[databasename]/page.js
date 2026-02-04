@@ -264,18 +264,19 @@ export default function DatabasePage() {
   return (
     <ProtectedRoute>
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50">
+        <Navbar />
         {/* Header Section */}
-        <div className="bg-white/10 backdrop-blur-lg border-b border-white/20 shadow-lg">
-          <Navbar />
+        <div className="bg-white/60 backdrop-blur-md border-b border-slate-200 shadow-sm">
+
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <Database className="text-purple-400" size={32} />
-                  <h1 className="text-3xl font-bold text-white">{databasename}</h1>
+                  <Database className="text-purple-600" size={32} />
+                  <h1 className="text-3xl font-bold text-slate-900">{databasename}</h1>
                 </div>
-                <p className="text-gray-300">Manage your database tables and structure</p>
+                <p className="text-slate-600">Manage your database tables and structure</p>
               </div>
               <button
                 onClick={handleCreateNew}
@@ -291,48 +292,48 @@ export default function DatabasePage() {
         {/* Stats Cards */}
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 shadow-lg">
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-md">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-blue-500/20 rounded-lg">
-                  <Table className="w-5 h-5 text-blue-400" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Table className="w-5 h-5 text-blue-600" />
                 </div>
-                <span className="text-gray-300 text-sm font-medium">Total Tables</span>
+                <span className="text-slate-600 text-sm font-medium">Total Tables</span>
               </div>
-              <div className="text-3xl font-bold text-white">{tables.length}</div>
+              <div className="text-3xl font-bold text-slate-900">{tables.length}</div>
             </div>
-          
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 shadow-lg">
+
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-md">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <Columns3 className="w-5 h-5 text-green-400" />
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Columns3 className="w-5 h-5 text-green-600" />
                 </div>
-                <span className="text-gray-300 text-sm font-medium">Total Columns</span>
+                <span className="text-slate-600 text-sm font-medium">Total Columns</span>
               </div>
-              <div className="text-3xl font-bold text-white">
+              <div className="text-3xl font-bold text-slate-900">
                 {tables.reduce((sum, t) => sum + (t.columns || 0), 0)}
               </div>
             </div>
-          
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 shadow-lg">
+
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-md">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-yellow-500/20 rounded-lg">
-                  <Key className="w-5 h-5 text-yellow-400" />
+                <div className="p-2 bg-yellow-100 rounded-lg">
+                  <Key className="w-5 h-5 text-yellow-600" />
                 </div>
-                <span className="text-gray-300 text-sm font-medium">Total Rows</span>
+                <span className="text-slate-600 text-sm font-medium">Total Rows</span>
               </div>
-              <div className="text-3xl font-bold text-white">
+              <div className="text-3xl font-bold text-slate-900">
                 {tables.reduce((sum, t) => sum + (t.rows || 0), 0).toLocaleString()}
               </div>
             </div>
-          
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 shadow-lg">
+
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-md">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-purple-500/20 rounded-lg">
-                  <Database className="w-5 h-5 text-purple-400" />
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Database className="w-5 h-5 text-purple-600" />
                 </div>
-                <span className="text-gray-300 text-sm font-medium">Total Size</span>
+                <span className="text-slate-600 text-sm font-medium">Total Size</span>
               </div>
-              <div className="text-3xl font-bold text-white">
+              <div className="text-3xl font-bold text-slate-900">
                 {tables.reduce((sum, t) => sum + parseFloat(t.size || 0), 0).toFixed(2)} KB
               </div>
             </div>
@@ -344,41 +345,41 @@ export default function DatabasePage() {
               {tables.map((table) => (
                 <div
                   key={table}
-                  className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-white/20 group hover:border-purple-400/50"
+                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 group hover:border-purple-400"
                 >
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-500/20 rounded-lg group-hover:bg-purple-500/30 transition-colors">
-                          <Table className="text-purple-300" size={24} />
+                        <div className="p-2 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                          <Table className="text-purple-600" size={24} />
                         </div>
                         <div>
-                          <h2 className="text-xl font-semibold text-white">{table}</h2>
+                          <h2 className="text-xl font-semibold text-slate-900">{table}</h2>
                         </div>
                       </div>
                       <button
                         onClick={() => handleDelete(table)}
-                        className="text-gray-400 hover:text-red-400 transition-colors"
+                        className="text-slate-400 hover:text-red-600 transition-colors"
                       >
                         <Trash2 size={20} />
                       </button>
                     </div>
-                  
+
                     <div className="space-y-3">
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleAddData(table)}
-                          className="flex-1 flex items-center justify-center gap-2 p-3 bg-green-500/20 hover:bg-green-500/30 rounded-lg border border-green-500/30 transition-colors"
+                          className="flex-1 flex items-center justify-center gap-2 p-3 bg-green-100 hover:bg-green-200 rounded-lg border border-green-200 transition-colors"
                         >
-                          <Plus className="text-green-400" size={16} />
-                          <span className="text-sm text-green-300 font-medium">Add Data</span>
+                          <Plus className="text-green-700" size={16} />
+                          <span className="text-sm text-green-700 font-medium">Add Data</span>
                         </button>
                         <button
                           onClick={() => handleViewData(table)}
-                          className="flex-1 flex items-center justify-center gap-2 p-3 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg border border-blue-500/30 transition-colors"
+                          className="flex-1 flex items-center justify-center gap-2 p-3 bg-blue-100 hover:bg-blue-200 rounded-lg border border-blue-200 transition-colors"
                         >
-                          <Eye className="text-blue-400" size={16} />
-                          <span className="text-sm text-blue-300 font-medium">View Data</span>
+                          <Eye className="text-blue-700" size={16} />
+                          <span className="text-sm text-blue-700 font-medium">View Data</span>
                         </button>
                       </div>
                     </div>
@@ -388,11 +389,11 @@ export default function DatabasePage() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-20">
-              <div className="p-6 bg-white/10 backdrop-blur-lg rounded-full shadow-lg mb-4 border border-white/20">
-                <Table className="text-gray-400" size={48} />
+              <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-full shadow-md mb-4 border border-purple-200">
+                <Table className="text-slate-600" size={48} />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">No tables yet</h3>
-              <p className="text-gray-400 mb-6">Get started by creating your first database table</p>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">No tables yet</h3>
+              <p className="text-slate-600 mb-6">Get started by creating your first database table</p>
               <button
                 onClick={handleCreateNew}
                 className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-purple-500/50"
@@ -406,20 +407,20 @@ export default function DatabasePage() {
 
         {/* Create Table Modal */}
         {isPopupOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-            <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full mx-auto border border-white/20 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-6 border-b border-white/10 sticky top-0 bg-slate-800 z-10">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full mx-auto border border-slate-200 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-6 border-b border-slate-100 sticky top-0 bg-white z-10">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-500/20 rounded-lg">
-                    <Plus className="text-purple-300" size={24} />
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <Plus className="text-purple-600" size={24} />
                   </div>
-                  <h3 className="text-xl font-semibold text-white">
+                  <h3 className="text-xl font-semibold text-slate-900">
                     Create New Table
                   </h3>
                 </div>
                 <button
                   onClick={closePopup}
-                  className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
+                  className="text-slate-500 hover:text-slate-900 transition-colors p-1 hover:bg-slate-100 rounded-lg"
                 >
                   <X size={24} />
                 </button>
@@ -427,15 +428,15 @@ export default function DatabasePage() {
 
               <div className="p-6">
                 {error && (
-                  <div className="mb-4 bg-red-500/20 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg flex items-start gap-2">
-                    <span className="text-red-400 font-bold">!</span>
+                  <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-2">
+                    <span className="text-red-600 font-bold">!</span>
                     <span className="text-sm">{error}</span>
                   </div>
                 )}
 
                 <div className="space-y-5">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-gray-300 mb-2">
+                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
                       Table Name
                     </label>
                     <input
@@ -451,7 +452,7 @@ export default function DatabasePage() {
                   </div>
 
                   <div>
-                    <label htmlFor="description" className="block text-sm font-semibold text-gray-300 mb-2">
+                    <label htmlFor="description" className="block text-sm font-semibold text-slate-700 mb-2">
                       Description
                     </label>
                     <input
@@ -467,7 +468,7 @@ export default function DatabasePage() {
                 </div>
 
                 <div className="mt-6">
-                  <h4 className="text-md font-semibold text-gray-200 mb-3">Table Columns</h4>
+                  <h4 className="text-md font-semibold text-slate-700 mb-3">Table Columns</h4>
 
                   {formData.columns.map((col, index) => (
                     <div key={index} className="grid grid-cols-6 gap-2 mb-3">
@@ -476,12 +477,12 @@ export default function DatabasePage() {
                         placeholder="Column name"
                         value={col.name}
                         onChange={(e) => handleColumnChange(index, 'name', e.target.value)}
-                        className="col-span-2 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500"
+                        className="col-span-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400"
                       />
                       <select
                         value={col.type}
                         onChange={(e) => handleColumnChange(index, 'type', e.target.value)}
-                        className="w-full col-span-1 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                        className="w-full col-span-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
                       >
                         <option value="">Type</option>
                         <option value="INT">INT</option>
@@ -495,9 +496,9 @@ export default function DatabasePage() {
                         placeholder="Length"
                         value={col.length || ''}
                         onChange={(e) => handleColumnChange(index, 'length', e.target.value)}
-                        className="col-span-1 px-3 py-2 bg-white/5 border border-white/20 rounded-lg text-white"
+                        className="col-span-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-900"
                       />
-                      <label className="flex items-center gap-1 text-gray-300 text-xs">
+                      <label className="flex items-center gap-1 text-slate-700 text-xs">
                         <input
                           type="checkbox"
                           checked={col.primary || false}
@@ -517,17 +518,17 @@ export default function DatabasePage() {
                   <button
                     type="button"
                     onClick={addColumn}
-                    className="mt-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                    className="mt-2 px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg"
                   >
                     + Add Column
                   </button>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={closePopup}
-                    className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                    className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
@@ -535,7 +536,7 @@ export default function DatabasePage() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                    className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                   >
                     {isSubmitting ? (
                       <div className="flex items-center gap-2">
@@ -554,20 +555,20 @@ export default function DatabasePage() {
 
         {/* Add Data Modal */}
         {isDataPopupOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-            <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full mx-auto border border-white/20 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-6 border-b border-white/10 sticky top-0 bg-slate-800 z-10">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-2xl shadow-xl max-w-2xl w-full mx-auto border border-slate-200 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-6 border-b border-slate-100 sticky top-0 bg-white z-10">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-500/20 rounded-lg">
-                    <Plus className="text-green-300" size={24} />
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Plus className="text-green-700" size={24} />
                   </div>
-                  <h3 className="text-xl font-semibold text-white">
+                  <h3 className="text-xl font-semibold text-slate-900">
                     Add Data to {selectedTable}
                   </h3>
                 </div>
                 <button
                   onClick={closeDataPopup}
-                  className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
+                  className="text-slate-500 hover:text-slate-900 transition-colors p-1 hover:bg-slate-100 rounded-lg"
                 >
                   <X size={24} />
                 </button>
@@ -575,8 +576,8 @@ export default function DatabasePage() {
 
               <div className="p-6">
                 {error && (
-                  <div className="mb-4 bg-red-500/20 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg flex items-start gap-2">
-                    <span className="text-red-400 font-bold">!</span>
+                  <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-2">
+                    <span className="text-red-600 font-bold">!</span>
                     <span className="text-sm">{error}</span>
                   </div>
                 )}
@@ -584,26 +585,26 @@ export default function DatabasePage() {
                 <div className="space-y-4">
                   {tableColumns.filter(col => col.name !== 'id' && col.extra !== 'auto_increment').map((column) => (
                     <div key={column.name}>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
                         {column.name}
-                        <span className="text-xs text-gray-500 ml-2">({column.type})</span>
+                        <span className="text-xs text-slate-500 ml-2">({column.type})</span>
                       </label>
                       <input
                         type="text"
                         value={rowData[column.name] || ''}
                         onChange={(e) => handleRowDataChange(column.name, e.target.value)}
                         placeholder={`Enter ${column.name}`}
-                        className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       />
                     </div>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={closeDataPopup}
-                    className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                    className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
@@ -611,7 +612,7 @@ export default function DatabasePage() {
                     type="button"
                     onClick={handleDataSubmit}
                     disabled={isSubmitting}
-                    className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                    className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                   >
                     {isSubmitting ? (
                       <div className="flex items-center gap-2">
@@ -630,23 +631,23 @@ export default function DatabasePage() {
 
         {/* View Data Modal */}
         {isViewDataPopupOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-            <div className="relative bg-slate-800 rounded-2xl shadow-2xl max-w-6xl w-full mx-auto border border-white/20 max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="flex items-center justify-between p-6 border-b border-white/10 bg-slate-800">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-2xl shadow-xl max-w-6xl w-full mx-auto border border-slate-200 max-h-[90vh] overflow-hidden flex flex-col">
+              <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-white">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-500/20 rounded-lg">
-                    <Eye className="text-blue-300" size={24} />
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <Eye className="text-blue-700" size={24} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-xl font-semibold text-slate-900">
                       {selectedTable} Data
                     </h3>
-                    <p className="text-sm text-gray-400">{tableData.length} rows</p>
+                    <p className="text-sm text-slate-600">{tableData.length} rows</p>
                   </div>
                 </div>
                 <button
                   onClick={closeViewDataPopup}
-                  className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
+                  className="text-slate-500 hover:text-slate-900 transition-colors p-1 hover:bg-slate-100 rounded-lg"
                 >
                   <X size={24} />
                 </button>
@@ -656,30 +657,30 @@ export default function DatabasePage() {
                 {tableData.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
-                      <thead className="sticky top-0 bg-slate-700/50 backdrop-blur-sm">
+                      <thead className="sticky top-0 bg-slate-50 backdrop-blur-sm">
                         <tr>
                           {tableColumns.map((col) => (
-                            <th key={col.name} className="px-4 py-3 text-left text-sm font-semibold text-gray-300 border-b border-white/10">
+                            <th key={col.name} className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border-b border-slate-200">
                               {col.name}
                             </th>
                           ))}
-                          <th className="px-4 py-3 text-left text-sm font-semibold text-gray-300 border-b border-white/10">
+                          <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border-b border-slate-200">
                             Actions
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         {tableData.map((row, index) => (
-                          <tr key={index} className="hover:bg-white/5 transition-colors border-b border-white/5">
+                          <tr key={index} className="hover:bg-slate-50 transition-colors border-b border-slate-100">
                             {tableColumns.map((col) => (
-                              <td key={col.name} className="px-4 py-3 text-sm text-gray-300">
-                                {row[col.name] !== null ? String(row[col.name]) : <span className="text-gray-500 italic">NULL</span>}
+                              <td key={col.name} className="px-4 py-3 text-sm text-slate-700">
+                                {row[col.name] !== null ? String(row[col.name]) : <span className="text-slate-400 italic">NULL</span>}
                               </td>
                             ))}
                             <td className="px-4 py-3">
                               <button
                                 onClick={() => handleDeleteRow(row.id)}
-                                className="text-red-400 hover:text-red-300 p-1 hover:bg-red-500/20 rounded transition-colors"
+                                className="text-red-600 hover:text-red-700 p-1 hover:bg-red-50 rounded transition-colors"
                                 title="Delete row"
                               >
                                 <Trash2 size={16} />
@@ -692,29 +693,29 @@ export default function DatabasePage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12">
-                    <div className="p-4 bg-white/5 rounded-full mb-4">
-                      <Database className="text-gray-500" size={40} />
+                    <div className="p-4 bg-slate-100 rounded-full mb-4">
+                      <Database className="text-slate-500" size={40} />
                     </div>
-                    <p className="text-gray-400 text-lg">No data in this table</p>
-                    <p className="text-gray-500 text-sm mt-2">Add some data to get started</p>
+                    <p className="text-slate-600 text-lg">No data in this table</p>
+                    <p className="text-slate-500 text-sm mt-2">Add some data to get started</p>
                   </div>
                 )}
               </div>
 
-              <div className="p-6 border-t border-white/10 bg-slate-800 flex justify-between items-center">
+              <div className="p-6 border-t border-slate-100 bg-white flex justify-between items-center">
                 <button
                   onClick={() => {
                     closeViewDataPopup();
                     handleAddData(selectedTable);
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-300 rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors"
                 >
                   <Plus size={16} />
                   Add New Row
                 </button>
                 <button
                   onClick={closeViewDataPopup}
-                  className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                  className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
                 >
                   Close
                 </button>
