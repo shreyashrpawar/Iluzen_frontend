@@ -243,11 +243,21 @@ export default function Page() {
                       <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
                         <div className='flex items-center justify-between mb-2'>
                           <p className="text-xs text-slate-600 font-medium">Response Preview</p>
-                          <CopyButton text={req.response} />
+                          {req.response_type === 'manual' && req.response && (
+                            <CopyButton text={req.response} />
+                          )}
                         </div>
-                        <pre className="text-xs text-slate-700 font-mono overflow-x-auto">
-                          {req.response.length > 60 ? req.response.substring(0, 60) + '...' : req.response}
-                        </pre>
+                        {req.response_type === 'database' ? (
+                          <div className="text-xs text-slate-700">
+                            <p className="font-semibold text-blue-600">📊 Dynamic Database Response</p>
+                            <p className="mt-1">Database: <span className="font-mono bg-slate-200 px-1 rounded">{req.database_name}</span></p>
+                            <p>Table: <span className="font-mono bg-slate-200 px-1 rounded">{req.table_name}</span></p>
+                          </div>
+                        ) : (
+                          <pre className="text-xs text-slate-700 font-mono overflow-x-auto">
+                            {req.response && req.response.length > 60 ? req.response.substring(0, 60) + '...' : req.response || 'No response'}
+                          </pre>
+                        )}
                       </div>
 
                       <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
